@@ -1,0 +1,103 @@
+Airflow setup steps for this project
+====================================
+
+Project folder:
+/Users/sak2708/Desktop/dags
+
+1. Create a virtual environment
+
+python3 -m venv .venv
+
+2. Activate the virtual environment
+
+source .venv/bin/activate
+
+3. Install dependencies
+
+pip install "apache-airflow==3.0.6" requests graphviz --constraint https://raw.githubusercontent.com/apache/airflow/constraints-3.0.6/constraints-3.12.txt
+
+4. Save dependencies
+
+requirements.txt contains:
+
+apache-airflow==3.0.6
+requests==2.32.5
+graphviz==0.21
+
+5. Use a project-local Airflow home
+
+export AIRFLOW_HOME=/Users/sak2708/Desktop/dags/airflow_home
+
+6. Turn off example DAGs
+
+export AIRFLOW__CORE__LOAD_EXAMPLES=False
+
+7. Set this project as the DAG folder
+
+export AIRFLOW__CORE__DAGS_FOLDER=/Users/sak2708/Desktop/dags
+
+8. Initialize or migrate the Airflow database
+
+airflow db migrate
+
+9. Check for DAG import errors
+
+airflow dags list-import-errors
+
+Expected output:
+No data found
+
+10. Confirm Airflow sees the DAG
+
+airflow dags list
+
+Expected DAG:
+download_rocket_launches
+
+11. Start Airflow
+
+airflow standalone
+
+12. Open Airflow in Safari
+
+http://localhost:8080
+
+13. Login
+
+Username:
+admin
+
+Password:
+Check this file:
+/Users/sak2708/Desktop/dags/airflow_home/simple_auth_manager_passwords.json.generated
+
+Notes
+-----
+
+Keep the terminal running while using Airflow.
+
+This project has a .airflowignore file so Airflow does not scan:
+.venv
+airflow_home
+data
+
+The DAG was updated for Airflow 3:
+- schedule_interval=None became schedule=None
+- airflow.utils.dates.days_ago(14) became pendulum.now("UTC").subtract(days=14)
+
+Useful checks
+-------------
+
+Check downloaded JSON:
+ls -lh /tmp/launches.json
+python -m json.tool /tmp/launches.json
+
+Check downloaded images:
+ls -lh /tmp/images
+find /tmp/images -type f | wc -l
+
+Check DAG runs:
+airflow dags list-runs -d download_rocket_launches
+
+Check task states:
+airflow tasks states-for-dag-run download_rocket_launches <dag_run_id>
