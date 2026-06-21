@@ -14,7 +14,7 @@ from airflow.operators.bash import BashOperator
 dag = DAG(
     dag_id="download_rocket_launches",
     start_date=pendulum.now("UTC").subtract(days=14),
-    schedule=None,
+    schedule="@daily", # 0 0 * * * 
 )
 
 #task to download launches.json from the space devs api
